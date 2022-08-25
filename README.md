@@ -1,1 +1,1 @@
-# CS-384_Python_Project
+# CS-384_Python_Projects
