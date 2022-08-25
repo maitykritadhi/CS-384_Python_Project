@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+
+    <title>Marksheet Generator</title>
+  </head>
+  <body>
+    <script>
+        function runScript(val){
+            var x = document.getElementById("masterFile").files[0];
+            var y = document.getElementById("responseFile").files[0];
+            var pmarks=document.getElementById("pmarks").value
+            var nmarks=document.getElementById("nmarks").value
+            const csrf = document.getElementsByName("csrfmiddlewaretoken")[0].value;
+            FD  = new FormData();
+            const XHR = new XMLHttpRequest()
+            FD.append('master_roll',x)
+            FD.append('response',y)
+            FD.append('pmarks',pmarks)
+            FD.append('nmarks',nmarks)
+            FD.append('action', val)
+            FD.append('csrfmiddlewaretoken',csrf)
+            XHR.open( 'POST', '{% url 'home' %}' );
+            XHR.send(FD);
+            XHR.onload = function(){
+              let v = XHR.response
+              v =JSON.parse(v)
+              if(v.foo)
+                alert("No roll number with ANSWER is present, Cannot Process!")
+          }
+        }
+    </script>  
+
+
+    <div class="container rounded p-5 my-5" style="border:2px solid gray">
+    {% csrf_token %}
+        <div class="text-center mb-5">
+          <h1>Marksheet Generator!</h1>
+        </div>
+        
+        <div class="row my-3">
+          <div class="col">
+            <h3>Master roll csv</h3>
+            <div class="custom-file">
+              <input type="file" class="custom-file-input" id="masterFile">
+              <label class="custom-file-label" for="masterFile">Choose file</label>
+            </div>
+          </div>
+          
+          <div class="col">
+            <h3>Response csv</h3>
+            <div class="custom-file">
+              <input type="file" class="custom-file-input" id="responseFile">
+              <label class="custom-file-label" for="responseFile">Choose file</label>
+            </div>
+          </div>
+        </div>
+        
+        <div class="row justify-content-center mt-5 mb-4">
+          <h4 class="col-3">Positive marks:</h4>
+          <input class="col-2" id="pmarks" type="number" />
+        </div>
+        <div class="row justify-content-center mb-5 mt-4">
+          <h4 class="col-3">Negative marks:</h4>
+          <input class="col-2" id="nmarks" type="number" />
+        </div>
+
+        <div class="text-center my-4">
+          <button type="button" class="btn btn-secondary btn-lg" onclick="runScript('one')">Generate concise Marksheet with Roll Num, Obtained Marks, marks after negative</button>
+        </div>
+        <div class="text-center">
+          <button type="button" class="btn btn-secondary btn-lg mx-5" onclick="runScript('two')">Generate Roll Number wise marksheet</button>
+          <button type="button" class="btn btn-secondary btn-lg mx-5" onclick="runScript('three')">Send Email</button>
+        </div>
+    </div>
+
+    
+    <script>
+      $(".custom-file-input").on("change", function() {
+        var fileName = $(this).val().split("\\").pop();
+        $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+      });
+    </script>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+  
+  </body>
+</html>
